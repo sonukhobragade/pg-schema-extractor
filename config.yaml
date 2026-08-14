@@ -1,0 +1,73 @@
+# Database Configuration
+database:
+  connection_timeout: 30
+  max_connections: 10
+  retry_attempts: 3
+  retry_delay: 5
+
+# Extraction Configuration
+extraction:
+  batch_size: 100
+  include_objects:
+    tables: true
+    functions: true
+    triggers: true
+    constraints: true
+    views: true
+    sequences: true
+  exclude_schemas:
+    - pg_catalog
+    - information_schema
+  exclude_patterns:
+    - temp_%
+    - _bak
+
+# Processing Configuration
+processing:
+  hash_algorithm: sha256
+  change_detection:
+    compare_comments: true
+    ignore_whitespace: true
+  risk_assessment:
+    high_risk_threshold: 0.8
+    medium_risk_threshold: 0.5
+
+# AI Configuration
+ai:
+  default_provider: openai
+  models:
+    openai:
+      analysis_model: gpt-4
+      quick_check_model: gpt-3.5-turbo
+    anthropic:
+      analysis_model: claude-3-opus
+      quick_check_model: claude-3-haiku
+  temperature: 0.1
+  max_tokens: 4000
+  request_timeout: 60
+
+# Notification Configuration
+notifications:
+  enabled: true
+  channels:
+    - email
+    - slack
+  thresholds:
+    high_risk: true
+    medium_risk: true
+    low_risk: false
+  include_details: true
+  max_changes_in_notification: 20
+
+# Storage Configuration
+storage:
+  retention_days: 90
+  compression: true
+  backup_enabled: true
+
+# Logging Configuration
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_rotation: 5MB
+  max_files: 10
