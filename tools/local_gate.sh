@@ -61,7 +61,7 @@ STEPS=(lint typecheck unit collect)
 
 step "Lint"                                 'python -m ruff check .'
 step "Type check"                           'true'
-# This repo is a partial extract and ships no tests/ directory. Skip rather
+# This repo ships no tests/ directory. Skip rather
 # than fail, so the gate still reports on everything else.
 if [ -d tests ]; then
   step "Unit tests (no external dependencies)" 'pytest tests/'
@@ -71,7 +71,7 @@ else
   printf '\n---------- skip: no tests/ directory in this extract ----------\n'
 fi
 # pytest exits 5 when it collects nothing, which is the normal state for the
-# partial extracts here. Treat "no tests" as a pass; treat a real collection
+# repos that ship no unit tests. Treat "no tests" as a pass; treat a real collection
 # error as a failure.
 step "Collection smoke" 'pytest --collect-only -q; rc=$?; [ $rc -eq 0 ] || [ $rc -eq 5 ]'
 
