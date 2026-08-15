@@ -1,5 +1,7 @@
 # pg-schema-extractor
 
+![gate](../../actions/workflows/gate.yml/badge.svg)
+
 Reads PostgreSQL schema metadata out of the catalogues and fingerprints it, so
 you can tell what changed between two points in time.
 
@@ -31,13 +33,40 @@ that cries wolf is one nobody reads.
 `src/models/` holds the record types: database objects, detected changes,
 notification payloads, and a schema for AI-assisted analysis of a change set.
 
+## How a comparison works
+
+```mermaid
+flowchart LR
+    PG[(PostgreSQL<br/>information_schema + pg_catalog)]
+
+    subgraph extract [Extraction]
+        BASE[base_extractor<br/>connection, schema filter, batching]
+        TBL[table_extractor<br/>columns, constraints, indexes, comments]
+    end
+
+    NORM[hash_utils<br/>normalise then hash]
+    REC[(Structured records<br/>one stable fingerprint each)]
+    DIFF{Compare<br/>fingerprints}
+    CHANGED[Changed objects only]
+
+    PG --> BASE --> TBL --> NORM --> REC --> DIFF --> CHANGED
+
+    classDef store fill:#eef,stroke:#88a
+    class PG,REC store
+```
+
+Normalisation before hashing is the whole trick. Hash the raw definition and a
+server upgrade reports every object in the database as modified.
+
 ## Honest scope
 
 This is the extraction and change-modelling layer, not a finished governance
 product.
 
-What is here works and is tested against real catalogues: table extraction,
-hashing, and the data model. What is **not** here is an orchestrator, a
+What is here works: table extraction, hashing, and the data model. The test
+suite covers the fingerprint and the hashing rules offline, by building the
+record types directly — it does not connect to a server, so the catalogue
+queries themselves are exercised by running the extractor, not by CI. What is **not** here is an orchestrator, a
 scheduler, notification delivery, or the AI analysis the models describe. The
 `ai_analysis` model defines the shape such a component would consume; no such
 component ships.
