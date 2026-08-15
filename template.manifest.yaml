@@ -1,8 +1,7 @@
 # template.manifest.yaml
 #
-# Declares (a) the placeholder variables init.sh substitutes, (b) the tier of
-# every templated file, and (c) where each file originated upstream, so
-# improvements can be synced forward instead of drifting.
+# Declares (a) the placeholder variables init.sh substitutes and (b) the tier
+# of every templated file.
 #
 # Tiers:
 #   1 = universal   — copied verbatim into every project
@@ -129,47 +128,3 @@ files:
     archon:
       description: "Archon task management + PRP command set"
       default: false
-
-# ---------------------------------------------------------------------------
-# Upstream provenance — used by scripts/sync-from-source.sh to pull
-# improvements forward from the repo this template was distilled from.
-# ---------------------------------------------------------------------------
-upstream:
-  # Set to the local path of the reference implementation.
-  source_repo: ""
-
-  # `mapping` — <template path>: <upstream path>. Sync REPORTS drift for every
-  # pair here and shows the diff. It does NOT overwrite unless the path is also
-  # in `overwrite_allowed` below.
-  mapping:
-    .claude/hooks/codex-review-schema.json: .claude/hooks/codex-review-schema.json
-    .claude/rules/KARPATHY.md: .claude/rules/KARPATHY.md
-    .claude/rules/VALIDATION_RULES.md: .claude/rules/QA_VALIDATION.md
-    .claude/rules/TESTING_STANDARD.md: .claude/rules/TESTING_RULES.md
-    .claude/rules/CODEBASE_EXPLORATION.md: .claude/rules/CODEBASE_EXPLORATION.md
-    .claude/rules/ERROR_CONTRACT_POLICY.md: .claude/rules/BACKEND_RESPONSE_CODES.md
-    .claude/rules/BUG_TEST_LINKAGE.md: .claude/rules/BUG_TEST_LINKAGE.md
-    modules/code-review-graph/files/.claude/rules/GRAPH_FIRST.md: .claude/rules/GRAPH_FIRST.md
-    tools/local_gate.sh: tools/local_gate.sh
-    .claude/hooks/scripts/enforce-workflow.py: .claude/hooks/scripts/enforce-workflow.py
-    .claude/hooks/scripts/edit-time-lint.py: .claude/hooks/scripts/edit-time-lint.py
-    .claude/hooks/scripts/codex-precommit-review.py: .claude/hooks/scripts/codex-precommit-review.py
-
-  # `overwrite_allowed` — the ONLY paths `--apply` may write. Block-by-default:
-  # a file belongs here only when the template copy is byte-identical to
-  # upstream and is meant to stay that way.
-  #
-  # Everything else in `mapping` was GENERALIZED by this template. Upstream's
-  # version is project-specific — applying it would drag the original back in
-  # and undo the rewrite. For those, read the reported diff, take the idea, and
-  # port it by hand keeping the generalized wording.
-  overwrite_allowed:
-    - .claude/hooks/codex-review-schema.json
-
-  # Never compared: no upstream counterpart, fully project-owned.
-  manual_review:
-    - CLAUDE.md
-    - AGENTS.md
-    - SOUL.md
-    - GEMINI.md
-    - .claude/settings.json
