@@ -117,8 +117,7 @@ Gate:       bash tools/local_gate.sh
 _none yet — run `bash scripts/init.sh --enable <module>`_
 <!-- MODULES:END -->
 
-Available: `qa-python`, `notion-tracker`, `code-review-graph`, `k8s-infra`,
-`metrics-grafana`, `archon`. See `modules/README.md`.
+No optional modules ship with this repository.
 
 ## Extending this file
 

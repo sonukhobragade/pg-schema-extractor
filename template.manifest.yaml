@@ -125,6 +125,3 @@ files:
     metrics-grafana:
       description: "metrics DB schema, run ingest, dashboards, weekly digest"
       default: false
-    archon:
-      description: "Archon task management + PRP command set"
-      default: false
