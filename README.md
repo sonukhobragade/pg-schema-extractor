@@ -82,14 +82,25 @@ from src.extractors.table_extractor import TableExtractor
 extractor = TableExtractor(
     host="localhost", port=5432,
     dbname="mydb", user="readonly", password="...",
+    exclude_schemas=["pg_catalog", "information_schema"],
 )
-tables = extractor.extract(schema="public")
+tables = extractor.extract()          # {"public.orders": Table, ...}
 
-for t in tables:
-    print(t.name, t.hash)
+for key, table in tables.items():
+    print(key, table.hash)
 ```
 
-Compare the hashes against a stored baseline to find what moved.
+`extract()` returns a dict keyed by `schema.name`. Compare those hashes against
+a stored baseline to find what moved:
+
+```
+  same     public.audit     04087bd6ea8430b7...
+  CHANGED  public.orders    9f20a67d5232ea7b...
+```
+
+That run followed a single `ALTER TABLE orders ADD COLUMN discount` plus a
+dropped NOT NULL. One object changed, one did not, and nothing else in the
+database had to be read to know that.
 
 A read-only role is sufficient and is what you should use. Nothing here writes.
 
